@@ -77,8 +77,8 @@ router.delete('/:id', async (req, res) => {
 
         if (!fuelTypes) return res.status(200).json([{ error: 'id not found' }]);
 
-        fuelTypes.sts = !unit.sts;
-        await unit.save();
+        fuelTypes.estado_Id = fuelTypes.estado_Id === 1 ? 2 : 1;
+        await fuelTypes.save();
 
         res.status(200).json([{ msg: 'ok' }]);
     } catch (error) {

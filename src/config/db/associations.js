@@ -17,14 +17,14 @@ module.exports = Associations = (Models) => {
 
   /* Relaciones entre Usuarios y Authorization */
   Authorization.belongsTo(Users, { foreignKey: "user_Id" });
-  Users.hasMany(Authorization, { foreignKey: "user_Id" });
+  Users.hasMany(Authorization, { foreignKey: "id" });
 
   /* Relaciones entre Usuarios y Estados */
   Users.belongsTo(Estados, { foreignKey: "estado_Id" });
-  Estados.hasMany(Users, { foreignKey: "estado_Id" });
+  Estados.hasMany(Users, { foreignKey: "id" });
 
   /* Relaciones entre Usuarios y Empleados */
-  Users.belongsTo(Empleados, { foreignKey: "user_Id" });
+  Users.belongsTo(Empleados, { foreignKey: "id" });
   Empleados.hasOne(Users, { foreignKey: "user_Id" });
 
   /* Relaciones entre Estados y Clientes */
@@ -38,6 +38,10 @@ module.exports = Associations = (Models) => {
   /* Relaciones entre Roles y Usuarios */
   Users.belongsTo(Roles, { foreignKey: "rol_Id" });
   Roles.hasMany(Users, { foreignKey: "rol_Id" });
+
+    /* Relaciones entre marca y Modelos */
+    Modelos.belongsTo(Marcas, { foreignKey: "marca_Id" });
+    Marcas.hasMany(Modelos, { foreignKey: "marca_Id" });
 
   /* Relaciones entre Vehículos y Tipos de Vehículos */
   Vehiculos.belongsTo(TiposVehiculos, { foreignKey: "tipoVehiculo_Id" });

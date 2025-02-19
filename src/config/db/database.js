@@ -20,7 +20,7 @@ Associations(Models);
 const DBNAME = 'apibd';
 
 // Sync tables to Database
-const ALTER_DB =  true;
+const ALTER_DB =  false;
 const alterMSG = DBNAME + '' + (ALTER_DB ? ' Tables Sync!' : ' Tables Conected!');
 
 sequelize

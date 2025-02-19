@@ -68,10 +68,13 @@ router.get('/:id', async (req, res) => {
 router.post('/', async (req, res) => {
     try {
         const { nombre, cedula, tandaLabor, porcientoComision, fechaIngreso, user_Id, estado_Id } = req.body;
+        
+        const employees = await Empleados.findOne({ where: { id: req.body.cedula } });
+        if (employees) return res.status(200).json([{ msg: 'La cedula ya existe en los registro' }]);
 
         const data = await Empleados.create({ nombre, cedula, tandaLabor, porcientoComision, fechaIngreso, user_Id, estado_Id});
 
-        return res.status(200).json([{ id: data.id }]);
+        return res.status(200).json([{ cedula: cedula }]);
     } catch (error) {
         return res.status(400).json([{ error: error.toString() }]);
     }
@@ -99,8 +102,8 @@ router.delete('/:id', async (req, res) => {
 
         if (!employees) return res.status(200).json([{ error: 'id not found' }]);
 
-        employees.sts = !unit.sts;
-        await unit.save();
+        employees.estado_Id = employees.estado_Id === 1 ? 2 : 1;
+        await employees.save();
 
         res.status(200).json([{ msg: 'ok' }]);
     } catch (error) {

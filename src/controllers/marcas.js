@@ -73,13 +73,13 @@ router.patch('/:id', async (req, res) => {
 /* Actualiza el estado de un registro en la tabla */
 router.delete('/:id', async (req, res) => {
     try {
-        const brands = await Marcas.findOne({ where: { id: req.params.id } });
+        const brand = await Marcas.findOne({ where: { id: req.params.id } });
 
-        if (!brands) return res.status(200).json([{ error: 'id not found' }]);
-
-        brands.sts = !unit.sts;
-        await unit.save();
-
+        if (!brand) return res.status(200).json([{ error: 'id not found' }]);
+    
+        brand.estado_Id = brand.estado_Id === 1 ? 2 : 1;
+        await brand.save();
+    
         res.status(200).json([{ msg: 'ok' }]);
     } catch (error) {
         return res.status(400).json([{ error: error.toString() }]);

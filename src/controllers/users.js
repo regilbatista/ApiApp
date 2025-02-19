@@ -17,17 +17,30 @@ router.get('/', async (req, res) => {
             });
             users = JSON.parse(JSON.stringify(users));
 
-        // await Promise.all(
-        //     users.map(async (item) => {
-        //         let areas = await Areas.findOne({ where: { id: item.area_Id } });
-        //         areas = JSON.parse(JSON.stringify(areas));
+        await Promise.all(
+            users.map(async (item) => {
+                let rol = await Roles.findOne({ where: { id: item.rol_Id } });
+                rol = JSON.parse(JSON.stringify(rol));
 
-        //         item.area = areas.area;
-        //         item.sku_code = areas.sku_code;
-        //     })
-        // );
+                item.rol_Id = rol.name;
+            })
+        );
 
         return res.status(200).json(users);
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json([{ error: error.toString() }]);
+    }
+});
+
+router.get('/roles', async (req, res) => {
+    try {
+        let roles = await Roles.findAll({
+             where: {estado_Id: 1} 
+            });
+            roles = JSON.parse(JSON.stringify(roles));
+
+        return res.status(200).json(roles);
     } catch (error) {
         console.log(error);
         return res.status(500).json([{ error: error.toString() }]);
@@ -42,6 +55,15 @@ router.get('/:id', async (req, res) => {
         });
 
         if (!data) return res.status(200).json({ data: 'data not found' });
+        await Promise.all(
+            data.map(async (item) => {
+                let rol = await Roles.findOne({ where: { id: item.rol_Id } });
+                rol = JSON.parse(JSON.stringify(rol));
+
+                item.rol_Id = rol.name;
+            })
+        );
+
         return res.status(200).json([data]);
 
     } catch (error) {
@@ -112,12 +134,13 @@ router.delete('/:id', async (req, res) => {
         const users = await Users.findOne({ where: { id: req.params.id } });
 
         if (!users) return res.status(200).json([{ error: 'id not found' }]);
-
-        users.sts = !unit.sts;
-        await unit.save();
-
+    
+        users.estado_Id = users.estado_Id === 1 ? 2 : 1;
+        await users.save();
+    
         res.status(200).json([{ msg: 'ok' }]);
     } catch (error) {
+        console.log(error);
         return res.status(400).json([{ error: error.toString() }]);
     }
 });

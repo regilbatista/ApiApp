@@ -1,11 +1,16 @@
 const router = require('express').Router();
-const { Modelos } = require('../config/db/database');
+const { Modelos, Marcas} = require('../config/db/database');
 
 /* Devuelve el listado de la tabla unit */
 router.get('/', async (req, res) => {
     try {
         let models = await Modelos.findAll({
              //where: {} 
+             include: [
+                {
+                    model: Marcas,
+                },
+            ] 
             });
             models = JSON.parse(JSON.stringify(models));
 
@@ -30,7 +35,12 @@ router.get('/:id', async (req, res) => {
 
     try {
         const data = await Modelos.findOne({
-            where: { id: req.params.id }
+            where: { id: req.params.id },
+            include: [
+                {
+                    model: Marcas,
+                },
+            ] 
         });
 
         if (!data) return res.status(200).json({ data: 'data not found' });
@@ -45,12 +55,13 @@ router.get('/:id', async (req, res) => {
 /* Inserta un registro en la tabla */
 router.post('/', async (req, res) => {
     try {
-        const { descripcion, estado_Id } = req.body;
+        const { descripcion, marca_Id, estado_Id } = req.body;
 
-        const data = await Modelos.create({ descripcion, estado_Id});
+        const data = await Modelos.create({ descripcion, marca_Id,estado_Id});
 
         return res.status(200).json([{ id: data.id }]);
     } catch (error) {
+        console.log(error);
         return res.status(400).json([{ error: error.toString() }]);
     }
 });
@@ -73,13 +84,13 @@ router.patch('/:id', async (req, res) => {
 /* Actualiza el estado de un registro en la tabla */
 router.delete('/:id', async (req, res) => {
     try {
-        const models = await Modelos.findOne({ where: { id: req.params.id } });
+        const model = await Modelos.findOne({ where: { id: req.params.id } });
 
-        if (!models) return res.status(200).json([{ error: 'id not found' }]);
-
-        models.sts = !unit.sts;
-        await unit.save();
-
+        if (!model) return res.status(200).json([{ error: 'id not found' }]);
+    
+        model.estado_Id = model.estado_Id === 1 ? 2 : 1;
+        await model.save();
+    
         res.status(200).json([{ msg: 'ok' }]);
     } catch (error) {
         return res.status(400).json([{ error: error.toString() }]);

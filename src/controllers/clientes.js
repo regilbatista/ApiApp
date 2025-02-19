@@ -44,13 +44,22 @@ router.get('/:id', async (req, res) => {
 
 /* Inserta un registro en la tabla */
 router.post('/', async (req, res) => {
-    try {
-        const { nombre, cedula, NoTarjetaCR, limiteCredito, tipoPersona } = req.body;
+    try { 
+        
+        const { nombre, cedula, NoTarjetaCR, limiteCredito, tipoPersona, estado_Id } = req.body;
 
-        const data = await Clientes.create({ nombre, cedula, NoTarjetaCR, limiteCredito, tipoPersona });
+        if (!nombre || !cedula || !NoTarjetaCR || !limiteCredito || !tipoPersona) {
+            return res.status(200).json([{ msg: 'Missing required fields' }]);
+        }
+
+        const customer = await Clientes.findOne({ where: { cedula: cedula } });
+        if (customer) return res.status(200).json([{ msg: 'La cedula ya existe en los registro' }]);
+
+        const data = await Clientes.create({ nombre, cedula, NoTarjetaCR, limiteCredito, tipoPersona, estado_Id });
 
         return res.status(200).json([{ id: data.id }]);
     } catch (error) {
+        console.log(error);
         return res.status(400).json([{ error: error.toString() }]);
     }
 });
@@ -73,12 +82,12 @@ router.patch('/:id', async (req, res) => {
 /* Actualiza el estado de un registro en la tabla */
 router.delete('/:id', async (req, res) => {
     try {
-        const customer = await Clientes.findOne({ where: { id: req.params.id } });
+        const customers = await Clientes.findOne({ where: { id: req.params.id } });
 
-        if (!customer) return res.status(200).json([{ error: 'id not found' }]);
+        if (!customers) return res.status(200).json([{ error: 'id not found' }]);
 
-        customer.sts = !unit.sts;
-        await unit.save();
+        customers.estado_Id = customers.estado_Id === 1 ? 2 : 1;
+        await customers.save();
 
         res.status(200).json([{ msg: 'ok' }]);
     } catch (error) {

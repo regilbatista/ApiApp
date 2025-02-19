@@ -1,11 +1,25 @@
 const router = require('express').Router();
-const { Vehiculos } = require('../config/db/database');
+const { Vehiculos, TiposVehiculos,TiposCombustibles, Marcas, Modelos } = require('../config/db/database');
 
 /* Devuelve el listado de la tabla unit */
 router.get('/', async (req, res) => {
     try {
         let vehicles = await Vehiculos.findAll({
              //where: {} 
+             include: [
+                {
+                    model: TiposVehiculos,
+                },
+                {
+                    model: TiposCombustibles,
+                },
+                {
+                    model: Marcas,
+                },
+                {
+                    model: Modelos,
+                },
+             ],
             });
             vehicles = JSON.parse(JSON.stringify(vehicles));
 
@@ -30,7 +44,21 @@ router.get('/:id', async (req, res) => {
 
     try {
         const data = await Vehiculos.findOne({
-            where: { id: req.params.id }
+            where: { id: req.params.id },
+            include: [
+                {
+                    model: TiposVehiculos,
+                },
+                {
+                    model: TiposCombustibles,
+                },
+                {
+                    model: Marcas,
+                },
+                {
+                    model: Modelos,
+                },
+             ],
         });
 
         if (!data) return res.status(200).json({ data: 'data not found' });
@@ -77,8 +105,8 @@ router.delete('/:id', async (req, res) => {
 
         if (!vehicles) return res.status(200).json([{ error: 'id not found' }]);
 
-        vehicles.sts = !unit.sts;
-        await unit.save();
+        vehicles.estado_Id = vehicles.estado_Id === 1 ? 2 : 1;
+        await vehicles.save();
 
         res.status(200).json([{ msg: 'ok' }]);
     } catch (error) {
