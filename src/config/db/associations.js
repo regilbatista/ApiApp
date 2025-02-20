@@ -21,7 +21,7 @@ module.exports = Associations = (Models) => {
 
   /* Relaciones entre Usuarios y Estados */
   Users.belongsTo(Estados, { foreignKey: "estado_Id" });
-  Estados.hasMany(Users, { foreignKey: "id" });
+  Estados.hasMany(Users, { foreignKey: "estado_Id" });
 
   /* Relaciones entre Usuarios y Empleados */
   Users.belongsTo(Empleados, { foreignKey: "id" });
@@ -78,6 +78,9 @@ module.exports = Associations = (Models) => {
   /* Relaciones entre Inspección y Estados */
   Inspeccion.belongsTo(Estados, { foreignKey: "estado_Id" });
   Estados.hasMany(Inspeccion, { foreignKey: "estado_Id" });
+
+  RentaDevolucion.hasOne(Inspeccion, { foreignKey: "rentaDevolucion_Id" });
+  Inspeccion.belongsTo(RentaDevolucion, { foreignKey: "rentaDevolucion_Id" });
 
   /* Relaciones entre Renta y Devolución con Empleados */
   RentaDevolucion.belongsTo(Empleados, { foreignKey: "empleado_Id" });

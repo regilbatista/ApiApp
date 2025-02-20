@@ -74,8 +74,10 @@ router.post('/', async (req, res) => {
 
         const data = await Empleados.create({ nombre, cedula, tandaLabor, porcientoComision, fechaIngreso, user_Id, estado_Id});
 
-        return res.status(200).json([{ cedula: cedula }]);
+        return res.status(200).json([{  id: data.id }]);
+        
     } catch (error) {
+        console.log(error);
         return res.status(400).json([{ error: error.toString() }]);
     }
 });

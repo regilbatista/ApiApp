@@ -5,11 +5,15 @@ module.exports = (sequelize, type) => {
             primaryKey: true,
             autoIncrement: true,
         },
+        rentaDevolucion_Id: {
+            type: type.INTEGER,
+            allowNull: false,
+        },
         vehiculo_Id: {
             type: type.INTEGER,
             allowNull: false,
         },
-        id_cliente: {
+        cliente_Id: {
             type: type.INTEGER,
             allowNull: false,
         },
